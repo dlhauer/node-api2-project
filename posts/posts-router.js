@@ -28,7 +28,7 @@ router.get('/:id', (req, res) => {
     })
     .catch( error => {
       console.log(error);
-      res.status(404).json({
+      res.status(500).json({
         message: 'Error retrieving the post.'
       });
     });
@@ -36,22 +36,31 @@ router.get('/:id', (req, res) => {
 
 router.get('/:id/comments', (req, res) => {
   const id = req.params.id;
-  Posts.findPostComments(id)
-    .then( comments => {
-      if (comments.length > 0) {
-        res.status(200).json(comments);
-      } else {
-        res.status(404).json( {
-          message: 'The post with the specified ID doesn\'t exist, ya fruitcake.'
+  Posts.findById(id)
+    .then( post => {
+      if (post.length > 0) {
+        Posts.findPostComments(id)
+        .then( comments => {
+          if (comments.length > 0) {
+            res.status(200).json(comments);
+          } else {
+            res.status(404).json( {
+              message: 'That post doesn\'t have any comments' 
+            });
+          }
         })
+        .catch( error => {
+          console.log(error);
+          res.status(500).json({
+            message: 'Error retrieiving post comments.'
+          });
+        });
+      } else {
+        res.status(400).json({
+          message: 'The post with the specified ID doesn\'t exist'
+        });
       }
     })
-    .catch( error => {
-      console.log(error);
-      res.status(500).json({
-        message: 'Error retrieiving post comments.'
-      });
-    });
 });
 
 router.post('/', (req, res) => {
