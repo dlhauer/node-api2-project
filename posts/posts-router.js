@@ -104,7 +104,37 @@ router.post('/:id/comments', (req, res) => {
         }
     })
   }
+});
+
+router.put('/:id', (req, res) => {
+  const id = req.params.id;
+  Posts.findById(id)
+    .then(post => {
+      if (post.length > 0) {
+        if (!req.body.title || !req.body.contents) {
+          res.status(400).json({
+            errorMessage: 'Hey, don\'t try to cheat the system by leaving out the title and contents.'
+          });
+        } else { 
+          Posts.update(id, req.body)
+            .then( count => {
+              res.status(200).json(count);
+            })
+            .catch( error => {
+              console.log(error);
+              res.status(500).json({
+                error: 'I made a boo-boo while updating the post. Sorry.'
+              });
+            });
+        }
+      } else {
+        res.status(404).json({
+          message: 'The post with the specified ID doesn\'t exist.'
+        });
+      }
+    })
 })
+  
 
 
 module.exports = router;
