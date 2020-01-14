@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
     .catch( error => {
       console.log(error)
       res.status(500).json({
-        message: 'Error retrieving the posts.'
+        error: 'Error retrieving the posts.'
       });
     });
 });
@@ -22,14 +22,14 @@ router.get('/:id', (req, res) => {
         res.status(200).json(post);
       } else {
         res.status(400).json({
-          message: 'The post with the specified ID doesn\'t exist, ya dingus.'
+          errorMessage: 'The post with the specified ID doesn\'t exist, ya dingus.'
         });
       }
     })
     .catch( error => {
       console.log(error);
       res.status(500).json({
-        message: 'Error retrieving the post.'
+        error: 'Error retrieving the post.'
       });
     });
 });
@@ -52,11 +52,11 @@ router.get('/:id/comments', (req, res) => {
         .catch( error => {
           console.log(error);
           res.status(500).json({
-            message: 'Error retrieiving post comments.'
+            error: 'Error retrieiving post comments.'
           });
         });
       } else {
-        res.status(400).json({
+        res.status(404).json({
           message: 'The post with the specified ID doesn\'t exist'
         });
       }
@@ -66,7 +66,7 @@ router.get('/:id/comments', (req, res) => {
 router.post('/', (req, res) => {
   if( !req.body.title || !req.body.contents) {
     res.status(400).json({
-      message: 'Whoa whoa whoa, you didn\'t think you could submit something without a title or contents, did you? Try again, hotshot.'
+      errorMessage: 'Whoa whoa whoa, you didn\'t think you could submit something without a title or contents, did you? Try again, hotshot.'
     })
   } else {
     const postData = req.body;
@@ -77,7 +77,7 @@ router.post('/', (req, res) => {
       .catch( error => {
         console.log(error);
         res.status(500).json({
-          message: 'There was an error saving the post to the database.'
+          error: 'There was an error saving the post to the database.'
         });
       });
   }
@@ -87,7 +87,7 @@ router.post('/:id/comments', (req, res) => {
   const id = req.params.id;
   if (!req.body.text) {
     res.status(400).json({
-      message: 'Gotta have some text in that comment, bro.'
+      errorMessage: 'Gotta have some text in that comment, bro.'
     })
   } else {
     Posts.findById(id)
@@ -103,7 +103,7 @@ router.post('/:id/comments', (req, res) => {
             })
             .catch( error => {
               res.status(500).json({
-                message: 'Error saving comment to database.'
+                error: 'Error saving comment to database.'
               });
             });
         } else {
