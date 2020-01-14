@@ -144,9 +144,31 @@ router.put('/:id', (req, res) => {
           message: 'The post with the specified ID doesn\'t exist.'
         });
       }
+    });
+});
+  
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
+
+  Posts.findById(id)
+    .then( post => {
+      if (post.length > 0) {
+        Posts.remove(id)
+          .then( () => {
+            res.status(200).json(post);
+          })
+          .catch( error => {
+            console.log(error)
+            res.status(500).json({
+              error: 'The post could not be removed.'
+            });
+          });
+      } else {
+        res.status(404).json({
+          message: 'The post with the specified ID does not exist.'
+        });
+      }
     })
 })
-  
-
 
 module.exports = router;
