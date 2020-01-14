@@ -117,8 +117,11 @@ router.put('/:id', (req, res) => {
           });
         } else { 
           Posts.update(id, req.body)
-            .then( count => {
-              res.status(200).json(count);
+            .then( () => {
+              Posts.findById(id)
+                .then( updatedPost => {
+                  res.status(200).json(updatedPost);
+                })
             })
             .catch( error => {
               console.log(error);
